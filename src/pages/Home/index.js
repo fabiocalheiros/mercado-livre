@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { MdAddShoppingCart } from 'react-icons/md';
+import { Pagination } from 'antd';
 import { formatPrice } from '../../Util/format';
 import api from '../../services/api';
 
@@ -12,11 +13,17 @@ import { ProductList } from './styles';
 
 class Home extends Component {
   state = {
+    category: 'MLB3707',
     products: [],
+    offset: 1,
   };
 
   async componentDidMount() {
-    const response = await api.get('/sites/MLB/search?category=MLB3707');
+    const { category } = this.state;
+
+    const response = await api.get(`/sites/MLB/search?category=${category}`);
+
+    console.tron.log(response);
 
     const data = response.data.results.map(product => ({
       ...product,
@@ -25,6 +32,34 @@ class Home extends Component {
 
     this.setState({ products: data });
   }
+
+  async componentWillUpdate() {
+    window.scrollTo(0, 0);
+  }
+
+  loadItens = async () => {
+    const { offset, category } = this.state;
+
+    const response = await api.get(`/sites/MLB/search?category=${category}`, {
+      params: {
+        offset: offset * 50,
+      },
+    });
+
+    const data = response.data.results.map(product => ({
+      ...product,
+      priceFormatted: formatPrice(product.price),
+    }));
+
+    this.setState({ products: data });
+  };
+
+  handlePage = async (current, pageSize) => {
+    await this.setState({
+      offset: current,
+    });
+    this.loadItens();
+  };
 
   handleAddProduct = product => {
     const { addToCartRequest } = this.props;
@@ -37,27 +72,31 @@ class Home extends Component {
     const { amount } = this.props;
 
     return (
-      <ProductList>
-        {products.map(product => (
-          <li key={product.id}>
-            <Link to={`/product/${product.id}`}>
-              <img src={product.thumbnail} alt={product.title} />
-            </Link>
-            <strong>{product.title}</strong>
-            <span>{product.priceFormatted}</span>
-            <button
-              type="button"
-              onClick={() => this.handleAddProduct(product)}
-            >
-              <div>
-                <MdAddShoppingCart size={16} color="#fff" />{' '}
-                {amount[product.id] || 0}
-              </div>
-              <span>ADICIONAR AO CARRINHO</span>
-            </button>
-          </li>
-        ))}
-      </ProductList>
+      <>
+        <ProductList>
+          {products.map(product => (
+            <li key={product.id}>
+              <Link to={`/product/${product.id}`}>
+                <img src={product.thumbnail} alt={product.title} />
+              </Link>
+              <strong>{product.title}</strong>
+              <span>{product.priceFormatted}</span>
+              <button
+                type="button"
+                onClick={() => this.handleAddProduct(product)}
+              >
+                <div>
+                  <MdAddShoppingCart size={16} color="#fff" />
+                  {amount[product.id] || 0}
+                </div>
+                <span>ADICIONAR AO CARRINHO</span>
+              </button>
+            </li>
+          ))}
+        </ProductList>
+
+        <Pagination onChange={this.handlePage} defaultCurrent={1} total={200} />
+      </>
     );
   }
 }

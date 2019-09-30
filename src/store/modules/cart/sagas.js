@@ -30,7 +30,7 @@ function* addToCart({ product }) {
     };
 
     yield put(addToCartSucess(data));
-    history.push('/cart');
+    // history.push('/cart');
   }
 }
 

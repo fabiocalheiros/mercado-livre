@@ -5,3 +5,22 @@ export const Container = styled.div`
   background: #fff;
   border-radius: 4px;
 `;
+
+export const HeaderPage = styled.div`
+  display: flex;
+  padding: 30px 0;
+
+  img {
+    max-width: 500px;
+  }
+
+  .desc-produto {
+    .vendidos {
+      color: #ccc;
+    }
+
+    h1 {
+      font-size: 26px;
+    }
+  }
+`;
