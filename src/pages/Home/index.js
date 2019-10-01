@@ -33,10 +33,6 @@ class Home extends Component {
     this.setState({ products: data });
   }
 
-  async componentWillUpdate() {
-    window.scrollTo(0, 0);
-  }
-
   loadItens = async () => {
     const { offset, category } = this.state;
 
@@ -59,6 +55,7 @@ class Home extends Component {
       offset: current,
     });
     this.loadItens();
+    window.scrollTo(0, 0);
   };
 
   handleAddProduct = product => {
@@ -94,7 +91,6 @@ class Home extends Component {
             </li>
           ))}
         </ProductList>
-
         <Pagination onChange={this.handlePage} defaultCurrent={1} total={200} />
       </>
     );

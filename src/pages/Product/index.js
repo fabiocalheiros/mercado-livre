@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import ReactImageMagnify from 'react-image-magnify';
-
+import { Carousel, Row, Col } from 'antd';
+import { MdAddShoppingCart } from 'react-icons/md';
 import { Container, HeaderPage } from './styles';
 import api from '../../services/api';
 
+import * as CartActions from '../../store/modules/cart/actions';
+
 import ListBreadcrumb from '../../components/ListBreadcrumb';
 
-export default class Product extends Component {
+class Product extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -34,37 +38,68 @@ export default class Product extends Component {
     });
   }
 
+  handleAddProduct = product => {
+    const { addToCartRequest } = this.props;
+
+    addToCartRequest(product);
+  };
+
   render() {
     const { categories, product } = this.state;
+    const { amount } = this.props;
+
+    const images = product.pictures;
 
     return (
       <Container>
         <ListBreadcrumb data={categories} />
-        <HeaderPage>
-          <div className="gallery">
-            <ReactImageMagnify
-              {...{
-                smallImage: {
-                  alt: 'Wristwatch by Ted Baker London',
-                  isFluidWidth: true,
-                  src:
-                    'https://http2.mlstatic.com/drone-com-controle-remoto-ky601-com-cmera-helicptero-azul-D_NQ_NP_953287-MLB31730214038_082019-F.webp',
-                },
-                largeImage: {
-                  src:
-                    'https://http2.mlstatic.com/drone-com-controle-remoto-ky601-com-cmera-helicptero-azul-D_NQ_NP_953287-MLB31730214038_082019-F.webp',
-                  width: 1064,
-                  height: 563,
-                },
-              }}
-            />
-          </div>
-          <div className="desc-produto">
-            <p className="vendidos">25 vendidos</p>
-            <h1>{product.title}</h1>
-          </div>
-        </HeaderPage>
+
+        <Row gutter={16} className="headerPage">
+          <Col span={12}>
+            <Carousel>
+              {images &&
+                images.map(image => (
+                  <div key={image.id}>
+                    <img src={image.url} alt={product.title} />
+                  </div>
+                ))}
+            </Carousel>
+          </Col>
+          <Col span={12}>
+            <HeaderPage>
+              <div className="desc-produto">
+                <p className="vendidos">25 vendidos</p>
+                <h1>{product.title}</h1>
+              </div>
+            </HeaderPage>
+
+            <button
+              type="button"
+              onClick={() => this.handleAddProduct(product)}
+            >
+              <MdAddShoppingCart size={16} color="#fff" />
+              <span>ADICIONAR AO CARRINHO</span>
+            </button>
+          </Col>
+        </Row>
       </Container>
     );
   }
 }
+
+
+const mapStateToProps = state => ({
+  amount: state.cart.reduce((amount, product) => {
+    amount[product.id] = product.amount;
+
+    return amount;
+  }, {}),
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Product);

@@ -6,6 +6,8 @@ export default function cart(state = [], action) {
       return produce(state, draft => {
         const { product } = action;
         draft.push(product);
+
+        localStorage.setItem('cart', JSON.stringify(product));
       });
 
     case '@cart/REMOVE':
