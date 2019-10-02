@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const ProductTable = styled.table`
+export const ProductTableStyles = styled.table`
   width: 100%;
 
   thead th {

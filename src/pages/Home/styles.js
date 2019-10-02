@@ -8,6 +8,7 @@ export const ProductList = styled.ul`
   list-style: none;
 
   li {
+    position: relative;
     display: flex;
     flex-direction: column;
     background: #fff;
@@ -32,7 +33,7 @@ export const ProductList = styled.ul`
       margin: 5px 0 20px;
     }
 
-    button {
+    button.addCart {
       background: #7159c1;
       color: #fff;
       border: 0;
@@ -65,5 +66,13 @@ export const ProductList = styled.ul`
         font-weight: bold;
       }
     }
+  }
+
+  .addFavorire{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    border: 0;
+    background: none;
   }
 `;

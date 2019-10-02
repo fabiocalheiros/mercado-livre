@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import { darken } from 'polished';
+
 export const ProductTable = styled.table`
   width: 100%;
 

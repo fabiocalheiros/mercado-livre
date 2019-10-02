@@ -6,15 +6,15 @@ import { formatPrice } from '../../Util/format';
 
 import * as CartActions from '../../store/modules/cart/actions';
 
-import { Container } from '../../components/Container/styles';
-
 import ProductTable from '../../components/ProductTable';
 
-function Cart({ cart, total, removeFromCart, updateAmountRequest }) {
+import { Container } from '../../components/Container/styles';
+
+function Favorite({ favorite, total, removeFromCart, updateAmountRequest }) {
   return (
     <Container>
       <ProductTable
-        data={cart}
+        data={favorite}
         total={total}
         removeFromCart={removeFromCart}
         updateAmountRequest={updateAmountRequest}
@@ -24,11 +24,11 @@ function Cart({ cart, total, removeFromCart, updateAmountRequest }) {
 }
 
 const mapStateToProps = state => ({
-  cart: state.cart.map(product => ({
+  favorite: state.favorite.map(product => ({
     ...product,
     subtotal: formatPrice(product.price * product.amount),
   })),
-  total: state.cart.reduce((total, product) => {
+  total: state.favorite.reduce((total, product) => {
     return total + product.price * product.amount;
   }, 0),
 });
@@ -39,4 +39,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Cart);
+)(Favorite);
