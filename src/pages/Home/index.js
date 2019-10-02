@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { MdAddShoppingCart, MdFavoriteBorder } from 'react-icons/md';
+import {
+  MdAddShoppingCart,
+  MdFavoriteBorder,
+  MdFavorite,
+} from 'react-icons/md';
 import { Pagination } from 'antd';
 import { formatPrice } from '../../Util/format';
 import api from '../../services/api';
@@ -11,7 +15,7 @@ import * as FavoriteActions from '../../store/modules/favorite/actions';
 
 import { ProductList } from './styles';
 
-function Home({amount, addToCartRequest, addToFavoriteRequest}) {
+function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState('MLB1051');
   const [offset, setOffset] = useState(1);
@@ -26,6 +30,7 @@ function Home({amount, addToCartRequest, addToFavoriteRequest}) {
     const data = response.data.results.map(product => ({
       ...product,
       priceFormatted: formatPrice(product.price),
+      favorite: false,
     }));
 
     setProducts(data);
@@ -46,6 +51,16 @@ function Home({amount, addToCartRequest, addToFavoriteRequest}) {
   }
 
   function handleAddFavorite(product) {
+    const listProducts = products;
+
+    listProducts.forEach(item => {
+      if (item.id === product.id) {
+        item.favorite = !item.favorite;
+      }
+    });
+
+    setProducts(listProducts);
+
     addToFavoriteRequest(product);
   }
 
@@ -59,7 +74,11 @@ function Home({amount, addToCartRequest, addToFavoriteRequest}) {
               className="addFavorire"
               onClick={() => handleAddFavorite(product)}
             >
-              <MdFavoriteBorder size={28} color="#666666" />
+              {product.favorite ? (
+                <MdFavorite size={28} color="#666666" />
+              ) : (
+                <MdFavoriteBorder size={28} color="#666666" />
+              )}
             </button>
             <Link to={`/product/${product.id}`}>
               <img src={product.thumbnail} alt={product.title} />
