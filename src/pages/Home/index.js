@@ -84,6 +84,7 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
               <img src={product.thumbnail} alt={product.title} />
             </Link>
             <strong>{product.title}</strong>
+            <small>Itens disponíveis: {product.available_quantity}</small>
             <span>{product.priceFormatted}</span>
             <button
               type="button"

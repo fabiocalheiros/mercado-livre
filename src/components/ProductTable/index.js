@@ -1,16 +1,21 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
+import {
+  MdRemoveCircleOutline,
+  MdAddCircleOutline,
+  MdDelete,
+} from 'react-icons/md';
 import { ProductTableStyles, Total } from './styles';
 
 import { formatPrice } from '../../Util/format';
 
-import {
-MdRemoveCircleOutline,
-  MdAddCircleOutline,
-  MdDelete,
-} from 'react-icons/md';
-
-export default function ProductTable({ data, total, removeFromCart, updateAmountRequest }) {
+export default function ProductTable({
+  data,
+  total,
+  removeFromCart,
+  updateAmountRequest,
+}) {
   function increment(product) {
     updateAmountRequest(product, product.amount + 1);
   }
@@ -35,10 +40,13 @@ export default function ProductTable({ data, total, removeFromCart, updateAmount
           {data.map(product => (
             <tr key={product.id}>
               <td>
-                <img src={product.thumbnail} alt={product.title} />
+                <Link to={`/product/${product.id}`}>
+                  <img src={product.thumbnail} alt={product.title} />
+                </Link>
               </td>
               <td>
                 <strong>{product.title}</strong>
+                <small>Itens disponíveis: {product.available_quantity}</small>
                 <span>{product.priceFormatted}</span>
               </td>
               <td>
