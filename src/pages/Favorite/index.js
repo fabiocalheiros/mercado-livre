@@ -13,14 +13,15 @@ import { Container } from '../../components/Container/styles';
 function Favorite({ favorite, total, removeFromFavorite, updateAmountRequestFavorite }){
   const [favorites, setFavorites] = useState(favorite);
 
-  // useEffect(() => {
-  //   const storageFavorites = localStorage.getItem('favorites');
-  //   if (storageFavorites) {
-  //     setFavorites(JSON.parse(storageFavorites));
-  //   } else {
-  //     setFavorites(favorite);
-  //   }
-  // }, []);
+  useEffect(() => {
+    const storageFavorites = localStorage.getItem('favorites');
+    if (storageFavorites) {
+      setFavorites(JSON.parse(storageFavorites));
+      console.log(JSON.parse(storageFavorites));
+    } else {
+      setFavorites(favorite);
+    }
+  }, []);
 
   return (
     <Container>
@@ -44,6 +45,16 @@ const mapStateToProps = state => ({
       return total + product.price * product.amount;
   }, 0),
 });
+
+// const mapStateToProps = state => ({
+//   favorite: state.favorite.map(product => ({
+//     ...product,
+//     subtotal: formatPrice(product.price * product.amount),
+//   })),
+//   total: state.favorite.reduce((total, product) => {
+//     return total + product.price * product.amount;
+//   }, 0),
+// });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(FavoriteActions, dispatch);

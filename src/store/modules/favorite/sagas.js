@@ -6,27 +6,17 @@ import { addToFavoriteSucess, updateAmountSuccess } from './actions';
 
 function* addToFavorite({ product }) {
   let oldInfo = JSON.parse(localStorage.getItem('favorites'));
-  let hasFavorite;
 
-  if (oldInfo) {
-    hasFavorite = oldInfo.find(k => k.id === product.id);
-  } else {
-    hasFavorite = false;
-  }
+  const data = {
+    ...product,
+    amount: 1,
+    priceFormatted: formatPrice(product.price),
+  };
 
-  if (hasFavorite) {
-    toast.error('Este item já foi adicionado');
-  } else {
-    const data = {
-      ...product,
-      amount: 1,
-      priceFormatted: formatPrice(product.price),
-    };
-    if (!(oldInfo instanceof Array)) oldInfo = [];
-    oldInfo.push(data);
-    localStorage.setItem('favorites', JSON.stringify(oldInfo));
-    yield put(addToFavoriteSucess(localStorage));
-  }
+  if (!(oldInfo instanceof Array)) oldInfo = [];
+  oldInfo.push(data);
+  localStorage.setItem('favorites', JSON.stringify(oldInfo));
+  yield put(addToFavoriteSucess(localStorage));
 }
 
 function* updateAmount({ product, amount }) {

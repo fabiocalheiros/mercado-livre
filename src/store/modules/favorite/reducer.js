@@ -9,11 +9,19 @@ export default function favorite(state = [], action) {
       });
 
     case '@favorite/REMOVE':
+      console.log("remove item favoritos");
       return produce(state, draft => {
         const productIndex = draft.findIndex(p => p.id === action.id);
         if (productIndex >= 0) {
           draft.splice(productIndex, 1);
         }
+
+        const getItens = JSON.parse(localStorage.getItem('favorites'));
+        const favIndex = getItens.findIndex(p => p.id === action.id);
+        if (favIndex >= 0) {
+          getItens.splice(favIndex, 1);
+        }
+        localStorage.setItem('favorites', JSON.stringify(getItens));
       });
     case '@favorite/UPDATE_AMOUNT_SUCCESS':
       return produce(state, draft => {

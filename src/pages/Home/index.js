@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { connect } from 'react-redux';
 import {
   MdAddShoppingCart,
@@ -27,10 +28,13 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
       },
     });
 
+    const oldInfo = JSON.parse(localStorage.getItem('favorites'));
+    const exists = oldInfo ? oldInfo : [];
+
     const data = response.data.results.map(product => ({
       ...product,
       priceFormatted: formatPrice(product.price),
-      favorite: false,
+      favorite: exists.find(k => k.id === product.id) ? true : false,
     }));
 
     setProducts(data);
@@ -53,14 +57,25 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
   function handleAddFavorite(product) {
     const listProducts = products;
 
-    listProducts.forEach(item => {
-      if (item.id === product.id) {
-        item.favorite = !item.favorite;
-      }
-    });
+    const oldInfo = JSON.parse(localStorage.getItem('favorites'));
+    let hasFavorite;
 
-    setProducts(listProducts);
+    if (oldInfo) {
+      hasFavorite = oldInfo.find(k => k.id === product.id);
+    } else {
+      hasFavorite = false;
+    }
 
+    if (hasFavorite) {
+      toast.error('Este item já foi adicionado');
+    } else {
+      listProducts.forEach(item => {
+        if (item.id === product.id) {
+          item.favorite = !item.favorite;
+        }
+      });
+      setProducts(listProducts);
+    }
     addToFavoriteRequest(product);
   }
 
