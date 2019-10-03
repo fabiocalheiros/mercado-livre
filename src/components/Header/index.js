@@ -39,5 +39,7 @@ function Header({ cartSize, favoriteSize }) {
 
 export default connect(state => ({
   cartSize: state.cart.length,
-  favoriteSize: state.favorite.length,
+  favoriteSize: localStorage.getItem('favorites')
+    ? JSON.parse(localStorage.getItem('favorites')).length
+    : state.favorite.length,
 }))(Header);

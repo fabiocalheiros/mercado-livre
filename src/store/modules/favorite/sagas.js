@@ -1,24 +1,31 @@
-import { select, put, all, takeLatest } from 'redux-saga/effects';
+import { put, all, takeLatest } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
 import { formatPrice } from '../../../Util/format';
 
 import { addToFavoriteSucess, updateAmountSuccess } from './actions';
 
 function* addToFavorite({ product }) {
-  const productExists = yield select(state =>
-    state.favorite.find(p => p.id === product.id)
-  );
+  let oldInfo = JSON.parse(localStorage.getItem('favorites'));
+  let hasFavorite;
 
-  if (!productExists) {
+  if (oldInfo) {
+    hasFavorite = oldInfo.find(k => k.id === product.id);
+  } else {
+    hasFavorite = false;
+  }
+
+  if (hasFavorite) {
+    toast.error('Este item já foi adicionado');
+  } else {
     const data = {
       ...product,
       amount: 1,
       priceFormatted: formatPrice(product.price),
     };
-
-    yield put(addToFavoriteSucess(data));
-  } else {
-    toast.error('Este item já foi adicionado');
+    if (!(oldInfo instanceof Array)) oldInfo = [];
+    oldInfo.push(data);
+    localStorage.setItem('favorites', JSON.stringify(oldInfo));
+    yield put(addToFavoriteSucess(localStorage));
   }
 }
 

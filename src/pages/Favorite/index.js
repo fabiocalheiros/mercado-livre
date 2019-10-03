@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -10,16 +10,22 @@ import ProductTable from '../../components/ProductTable';
 
 import { Container } from '../../components/Container/styles';
 
-function Favorite({
-  favorite,
-  total,
-  removeFromFavorite,
-  updateAmountRequestFavorite,
-}) {
+function Favorite({ favorite, total, removeFromFavorite, updateAmountRequestFavorite }){
+  const [favorites, setFavorites] = useState(favorite);
+
+  // useEffect(() => {
+  //   const storageFavorites = localStorage.getItem('favorites');
+  //   if (storageFavorites) {
+  //     setFavorites(JSON.parse(storageFavorites));
+  //   } else {
+  //     setFavorites(favorite);
+  //   }
+  // }, []);
+
   return (
     <Container>
       <ProductTable
-        data={favorite}
+        data={favorites}
         total={total}
         removeFromCart={removeFromFavorite}
         updateAmountRequest={updateAmountRequestFavorite}
@@ -29,12 +35,13 @@ function Favorite({
 }
 
 const mapStateToProps = state => ({
-  favorite: state.favorite.map(product => ({
+  favorite: JSON.parse(localStorage.getItem('favorites')).map(product => ({
     ...product,
     subtotal: formatPrice(product.price * product.amount),
   })),
-  total: state.favorite.reduce((total, product) => {
-    return total + product.price * product.amount;
+  total: JSON.parse(localStorage.getItem('favorites')).reduce(
+    (total, product) => {
+      return total + product.price * product.amount;
   }, 0),
 });
 
