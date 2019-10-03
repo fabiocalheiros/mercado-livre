@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
+import { toast } from 'react-toastify';
 import { formatPrice } from '../../Util/format';
-import api from '../../services/api';
-
-import * as CartActions from '../../store/modules/cart/actions';
-import * as FavoriteActions from '../../store/modules/favorite/actions';
 
 import ProductList from '../../components/ProductList';
 
-function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
-  const [products, setProducts] = useState([]);
-  const [category, setCategory] = useState('MLB1051');
+import api from '../../services/api';
+
+import * as CartActions from '../../store/modules/cart/actions';
+
+function Search(props, {addToCartRequest, addToFavoriteRequest}) {
+  const [searchs, setSearchs] = useState([]);
   const [offset, setOffset] = useState(1);
 
   async function loadItens() {
-    const response = await api.get(`/sites/MLB/search?category=${category}`, {
+    const term = props.match.params.id;
+
+    const response = await api.get(`sites/MLB/search?q=${term}`, {
       params: {
         offset: offset * 50,
       },
@@ -31,7 +33,7 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
       favorite: exists.find(k => k.id === product.id) ? true : false,
     }));
 
-    setProducts(data);
+    setSearchs(data);
   }
 
   useEffect(() => {
@@ -49,7 +51,7 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
   }
 
   function handleAddFavorite(product) {
-    const listProducts = products;
+    const listProducts = searchs;
 
     const oldInfo = JSON.parse(localStorage.getItem('favorites'));
     let hasFavorite;
@@ -68,7 +70,7 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
           item.favorite = !item.favorite;
         }
       });
-      setProducts(listProducts);
+      setSearchs(listProducts);
     }
     addToFavoriteRequest(product);
   }
@@ -76,11 +78,10 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
   return (
     <>
       <ProductList
-        products={products}
+        products={searchs}
         handlePage={handlePage}
         handleAddProduct={handleAddProduct}
         handleAddFavorite={handleAddFavorite}
-        amount={amount}
       />
     </>
   );
@@ -93,12 +94,10 @@ const mapStateToProps = state => ({
   }, {}),
 });
 
-const mapDispatchToProps = {
-  ...CartActions,
-  ...FavoriteActions,
-};
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Home);
+)(Search);

@@ -12,6 +12,24 @@ export const Container = styled.div`
     justify-content: center;
     align-items: center;
   }
+
+  .searchCustom{
+    position: relative;
+    input{
+      padding: 12px;
+      border: 0;
+      border-radius: 4px;
+      min-width: 300px;
+    }
+
+    button{
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: 0;
+      top: 10px;
+    }
+  }
 `;
 
 export const Cart = styled(Link)`
