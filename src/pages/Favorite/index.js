@@ -4,20 +4,25 @@ import { bindActionCreators } from 'redux';
 
 import { formatPrice } from '../../Util/format';
 
-import * as CartActions from '../../store/modules/cart/actions';
+import * as FavoriteActions from '../../store/modules/favorite/actions';
 
 import ProductTable from '../../components/ProductTable';
 
 import { Container } from '../../components/Container/styles';
 
-function Favorite({ favorite, total, removeFromCart, updateAmountRequest }) {
+function Favorite({
+  favorite,
+  total,
+  removeFromFavorite,
+  updateAmountRequestFavorite,
+}) {
   return (
     <Container>
       <ProductTable
         data={favorite}
         total={total}
-        removeFromCart={removeFromCart}
-        updateAmountRequest={updateAmountRequest}
+        removeFromCart={removeFromFavorite}
+        updateAmountRequest={updateAmountRequestFavorite}
       />
     </Container>
   );
@@ -34,7 +39,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators(CartActions, dispatch);
+  bindActionCreators(FavoriteActions, dispatch);
 
 export default connect(
   mapStateToProps,

@@ -12,6 +12,22 @@ export function addToFavoriteSucess(product) {
   };
 }
 
+export function updateAmountRequestFavorite(product, amount) {
+  return {
+    type: '@favorite/UPDATE_AMOUNT_REQUEST',
+    product,
+    amount,
+  };
+}
+
+export function updateAmountSuccess(product, amount) {
+  return {
+    type: '@favorite/UPDATE_AMOUNT_SUCCESS',
+    product,
+    amount,
+  };
+}
+
 export function removeFromFavorite(id) {
   return {
     type: '@favorite/REMOVE',
