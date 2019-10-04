@@ -80,13 +80,13 @@ class Product extends Component {
               <MdAddShoppingCart size={16} color="#fff" />
               <span>ADICIONAR AO CARRINHO</span>
             </button>
+            {amount}
           </Col>
         </Row>
       </Container>
     );
   }
 }
-
 
 const mapStateToProps = state => ({
   amount: state.cart.reduce((amount, product) => {

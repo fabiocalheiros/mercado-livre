@@ -14,7 +14,7 @@ export default function Routes() {
       <Route path="/cart" component={Cart} />
       <Route path="/product/:id" component={Product} />
       <Route path="/favorites" component={Favorite} />
-      <Route path="/search/:id" component={Search} />
+      <Route path="/search" component={Search} />
     </Switch>
   );
 }

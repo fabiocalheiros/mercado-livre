@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { toast } from 'react-toastify';
 import { formatPrice } from '../../Util/format';
@@ -10,13 +9,29 @@ import ProductList from '../../components/ProductList';
 import api from '../../services/api';
 
 import * as CartActions from '../../store/modules/cart/actions';
+import * as FavoriteActions from '../../store/modules/favorite/actions';
 
-function Search(props, {addToCartRequest, addToFavoriteRequest}) {
+function Search({ amount, addToCartRequest, addToFavoriteRequest }) {
   const [searchs, setSearchs] = useState([]);
   const [offset, setOffset] = useState(1);
 
+  function getQueryStringValue(key) {
+    return decodeURIComponent(
+      window.location.search.replace(
+        new RegExp(
+          `^(?:.*[&\\?]${encodeURIComponent(key).replace(
+            /[\.\+\*]/g,
+            '\\$&'
+          )}(?:\\=([^&]*))?)?.*$`,
+          'i'
+        ),
+        '$1'
+      )
+    );
+  }
+
   async function loadItens() {
-    const term = props.match.params.id;
+    const term = getQueryStringValue('s');
 
     const response = await api.get(`sites/MLB/search?q=${term}`, {
       params: {
@@ -25,14 +40,13 @@ function Search(props, {addToCartRequest, addToFavoriteRequest}) {
     });
 
     const oldInfo = JSON.parse(localStorage.getItem('favorites'));
-    const exists = oldInfo ? oldInfo : [];
+    const exists = oldInfo || [];
 
     const data = response.data.results.map(product => ({
       ...product,
       priceFormatted: formatPrice(product.price),
-      favorite: exists.find(k => k.id === product.id) ? true : false,
+      favorite: !!exists.find(k => k.id === product.id),
     }));
-
     setSearchs(data);
   }
 
@@ -82,6 +96,7 @@ function Search(props, {addToCartRequest, addToFavoriteRequest}) {
         handlePage={handlePage}
         handleAddProduct={handleAddProduct}
         handleAddFavorite={handleAddFavorite}
+        amount={amount}
       />
     </>
   );
@@ -94,8 +109,10 @@ const mapStateToProps = state => ({
   }, {}),
 });
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(CartActions, dispatch);
+const mapDispatchToProps = {
+  ...CartActions,
+  ...FavoriteActions,
+};
 
 export default connect(
   mapStateToProps,

@@ -2,7 +2,7 @@ import { put, all, takeLatest } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
 import { formatPrice } from '../../../Util/format';
 
-import { addToFavoriteSucess, updateAmountSuccess } from './actions';
+import { addToFavoriteSucess, updateAmountSuccessFavorite } from './actions';
 
 function* addToFavorite({ product }) {
   let oldInfo = JSON.parse(localStorage.getItem('favorites'));
@@ -16,10 +16,10 @@ function* addToFavorite({ product }) {
   if (!(oldInfo instanceof Array)) oldInfo = [];
   oldInfo.push(data);
   localStorage.setItem('favorites', JSON.stringify(oldInfo));
-  yield put(addToFavoriteSucess(localStorage));
+  yield put(addToFavoriteSucess(data));
 }
 
-function* updateAmount({ product, amount }) {
+function* updateAmountRequestFavorite({ product, amount }) {
   if (amount <= 0) return;
 
   const stockAmount = product.available_quantity;
@@ -29,10 +29,10 @@ function* updateAmount({ product, amount }) {
     return;
   }
 
-  yield put(updateAmountSuccess(product, amount));
+  yield put(updateAmountSuccessFavorite(product, amount));
 }
 
 export default all([
   takeLatest('@favorite/ADD_REQUEST', addToFavorite),
-  takeLatest('@favorite/UPDATE_AMOUNT_REQUEST', updateAmount),
+  takeLatest('@favorite/UPDATE_AMOUNT_REQUEST', updateAmountRequestFavorite),
 ]);

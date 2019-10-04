@@ -20,7 +20,7 @@ export function updateAmountRequestFavorite(product, amount) {
   };
 }
 
-export function updateAmountSuccess(product, amount) {
+export function updateAmountSuccessFavorite(product, amount) {
   return {
     type: '@favorite/UPDATE_AMOUNT_SUCCESS',
     product,

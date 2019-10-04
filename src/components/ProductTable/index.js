@@ -69,7 +69,7 @@ export default function ProductTable({
                 </div>
               </td>
               <td>
-                <strong>{product.subtotal}</strong>
+                <strong>{product.subTotal}</strong>
               </td>
               <td>
                 <button type="button">

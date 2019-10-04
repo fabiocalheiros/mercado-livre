@@ -14,19 +14,27 @@ function Header({ cartSize, favoriteSize }) {
   const [newSearch, setNewSearch] = useState('');
 
   function handledSearch() {
-    history.push(`/search/?s=${newSearch}`);
+    history.push(`/search?s=${newSearch}`);
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === 'Enter') {
+      console.log('apertou o enter');
+      history.push(`/search?s=${newSearch}`);
+    }
   }
 
   return (
     <Container>
       <Link to="/">
-        {/* <img src={logo} alt="Rocketshoes" /> */}
+        <img src={logo} alt="Rocketshoes" />
       </Link>
 
       <div className="searchCustom">
         <input
           type="text"
           placeholder="Digite aqui o que você procura"
+          onKeyDown={e => handleKeyDown(e)}
           onChange={e => setNewSearch(e.target.value)}
         />
         <button type="button" onClick={handledSearch}>

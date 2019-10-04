@@ -1,26 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { formatPrice } from '../../Util/format';
 
+import * as CartActions from '../../store/modules/cart/actions';
 import * as FavoriteActions from '../../store/modules/favorite/actions';
 
 import ProductTable from '../../components/ProductTable';
 
 import { Container } from '../../components/Container/styles';
 
-function Favorite({ favorite, total, removeFromFavorite, updateAmountRequestFavorite }){
+function Favorite({
+  favorite,
+  total,
+  removeFromFavorite,
+  updateAmountRequestFavorite,
+}) {
   const [favorites, setFavorites] = useState(favorite);
 
-  useEffect(() => {
+  const fetchFavorites = async () => {
     const storageFavorites = localStorage.getItem('favorites');
     if (storageFavorites) {
       setFavorites(JSON.parse(storageFavorites));
-      console.log(JSON.parse(storageFavorites));
     } else {
       setFavorites(favorite);
     }
+  };
+
+  useEffect(() => {
+    fetchFavorites();
   }, []);
 
   return (
@@ -35,29 +43,26 @@ function Favorite({ favorite, total, removeFromFavorite, updateAmountRequestFavo
   );
 }
 
-const mapStateToProps = state => ({
-  favorite: JSON.parse(localStorage.getItem('favorites')).map(product => ({
-    ...product,
-    subtotal: formatPrice(product.price * product.amount),
-  })),
-  total: JSON.parse(localStorage.getItem('favorites')).reduce(
-    (total, product) => {
+function mapStateToProps(state) {
+  const storageFavorites =
+    JSON.parse(localStorage.getItem('favorites')) || state.favorite;
+
+  const data = {
+    favorite: storageFavorites.map(product => ({
+      ...product,
+      subTotal: formatPrice(product.price * product.amount),
+    })),
+    total: storageFavorites.reduce((total, product) => {
       return total + product.price * product.amount;
-  }, 0),
-});
+    }, 0),
+  };
+  return data;
+}
 
-// const mapStateToProps = state => ({
-//   favorite: state.favorite.map(product => ({
-//     ...product,
-//     subtotal: formatPrice(product.price * product.amount),
-//   })),
-//   total: state.favorite.reduce((total, product) => {
-//     return total + product.price * product.amount;
-//   }, 0),
-// });
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(FavoriteActions, dispatch);
+const mapDispatchToProps = {
+  ...CartActions,
+  ...FavoriteActions,
+};
 
 export default connect(
   mapStateToProps,

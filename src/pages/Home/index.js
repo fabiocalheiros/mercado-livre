@@ -12,7 +12,7 @@ import ProductList from '../../components/ProductList';
 
 function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
   const [products, setProducts] = useState([]);
-  const [category, setCategory] = useState('MLB1051');
+  const [category] = useState('MLB1051');
   const [offset, setOffset] = useState(1);
 
   async function loadItens() {
@@ -23,12 +23,12 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
     });
 
     const oldInfo = JSON.parse(localStorage.getItem('favorites'));
-    const exists = oldInfo ? oldInfo : [];
+    const exists = oldInfo || [];
 
     const data = response.data.results.map(product => ({
       ...product,
       priceFormatted: formatPrice(product.price),
-      favorite: exists.find(k => k.id === product.id) ? true : false,
+      favorite: !!exists.find(k => k.id === product.id),
     }));
 
     setProducts(data);

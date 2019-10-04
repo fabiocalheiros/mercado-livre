@@ -10,9 +10,13 @@ import { Pagination } from 'antd';
 
 import { ProductListStyles } from './styles';
 
-export default function ProductList({products, handleAddFavorite, handleAddProduct, handlePage, amount}) {
-  console.log(products);
-
+export default function ProductList({
+  products,
+  handleAddFavorite,
+  handleAddProduct,
+  handlePage,
+  amount,
+}) {
   return (
     <>
       <ProductListStyles>
@@ -48,7 +52,7 @@ export default function ProductList({products, handleAddFavorite, handleAddProdu
                 <span>ADICIONAR AO CARRINHO</span>
               </button>
             </li>
-        ))}
+          ))}
       </ProductListStyles>
       <Pagination onChange={handlePage} defaultCurrent={1} total={200} />
     </>
