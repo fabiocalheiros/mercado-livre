@@ -27,7 +27,7 @@ function Header({ cartSize, favoriteSize }) {
   return (
     <Container>
       <Link to="/">
-        <img src={logo} alt="Rocketshoes" />
+        {/* <img src={logo} alt="Rocketshoes" /> */}
       </Link>
 
       <div className="searchCustom">

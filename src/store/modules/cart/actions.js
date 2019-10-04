@@ -34,3 +34,10 @@ export function updateAmountSuccess(product, amount) {
     amount,
   };
 }
+
+export function addFilterCategory(category) {
+  return {
+    type: '@cart/FILTER_BY_CATEGORY',
+    category,
+  };
+}

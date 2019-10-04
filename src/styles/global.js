@@ -25,12 +25,32 @@ export default createGlobalStyle`
   }
 
   #root{
-    max-width: 1220px;
-    margin: 0 auto;
     padding: 0 20px 50px;
   }
 
   button{
     cursor: pointer;
+  }
+
+  .out-site{
+    display: flex;
+
+    .sidebar{
+      background: #fff;
+      min-width: 300px;
+      margin-right: 20px;
+      padding: 20px;
+      border-radius: 5px;
+
+      ul{
+        margin: 0;
+        padding: 0;
+
+        li{
+          list-style: none;
+          margin-bottom: 10px;
+        }
+      }
+    }
   }
 `;

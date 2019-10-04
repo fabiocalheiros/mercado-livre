@@ -23,6 +23,11 @@ export default function cart(state = [], action) {
           draft[productIndex].amount = Number(action.amount);
         }
       });
+
+    case '@cart/FILTER_BY_CATEGORY':
+      return produce(state, draft => {
+        draft.find(p => p.category_id === 'MLB1055');
+      });
     default:
       return state;
   }

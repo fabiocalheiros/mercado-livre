@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { connect } from 'react-redux';
 
+import { Checkbox } from 'antd';
+
 import { formatPrice } from '../../Util/format';
 import api from '../../services/api';
 
@@ -10,10 +12,32 @@ import * as FavoriteActions from '../../store/modules/favorite/actions';
 
 import ProductList from '../../components/ProductList';
 
-function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
+function Home({ amount, addToCartRequest, addToFavoriteRequest, addFilterCategory }) {
   const [products, setProducts] = useState([]);
   const [category] = useState('MLB1051');
   const [offset, setOffset] = useState(1);
+  const [listCategories, setlistCategories] = useState([]);
+
+  function uniq(a) {
+    return a.sort().filter(function(item, pos, ary) {
+      return !pos || item !== ary[pos - 1];
+    });
+  }
+
+  function setListCategories(data){
+    const arrayNew = [];
+
+    data.map(item => {
+      item.attributes.map(attr => {
+        if (attr.id === 'BRAND') {
+          arrayNew.push(attr.value_name);
+        }
+      });
+    });
+
+    const uniqueNames = uniq(arrayNew);
+    setlistCategories(uniqueNames);
+  }
 
   async function loadItens() {
     const response = await api.get(`/sites/MLB/search?category=${category}`, {
@@ -31,7 +55,10 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
       favorite: !!exists.find(k => k.id === product.id),
     }));
 
+    console.log(data);
+
     setProducts(data);
+    setListCategories(data);
   }
 
   useEffect(() => {
@@ -42,6 +69,11 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
     setOffset(current);
     loadItens();
     window.scrollTo(0, 0);
+  }
+
+  function onChangeCheckBox(categoria) {
+    console.log("filtrar por: ", categoria);
+    addFilterCategory(categoria);
   }
 
   function handleAddProduct(product) {
@@ -75,13 +107,29 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest }) {
 
   return (
     <>
-      <ProductList
-        products={products}
-        handlePage={handlePage}
-        handleAddProduct={handleAddProduct}
-        handleAddFavorite={handleAddFavorite}
-        amount={amount}
-      />
+      <div className="out-site">
+        <div className="sidebar">
+          <h2>Propriedades</h2>
+          <ul>
+            {listCategories.map(item => (
+              <li key={item}>
+                <Checkbox onChange={() => onChangeCheckBox(item)}>
+                  {item}
+                </Checkbox>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="out-view">
+          <ProductList
+            products={products}
+            handlePage={handlePage}
+            handleAddProduct={handleAddProduct}
+            handleAddFavorite={handleAddFavorite}
+            amount={amount}
+          />
+        </div>
+      </div>
     </>
   );
 }
