@@ -19,7 +19,6 @@ function Header({ cartSize, favoriteSize }) {
 
   function handleKeyDown(e) {
     if (e.key === 'Enter') {
-      console.log('apertou o enter');
       history.push(`/search?s=${newSearch}`);
     }
   }
