@@ -8,7 +8,6 @@ export default function filter(state = [], action) {
         console.log('chegou no reducer');
         console.log('category', category);
         console.log('products', products);
-        // draft = products;
         draft.push(products);
       });
     default:

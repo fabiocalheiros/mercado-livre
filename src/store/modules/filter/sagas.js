@@ -16,7 +16,8 @@ function* filterByCategory({ category, products }) {
   //   });
   // });
 
-  products = {};
+  // ******* unica coisa que funciona *********
+  // products.splice(0, 47);
 
   // products.find(p =>
   //   p.attributes.find(i => i.id === 'BRAND' && i.value_name === 'Apple')
