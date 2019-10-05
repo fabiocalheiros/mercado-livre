@@ -9,10 +9,17 @@ import api from '../../services/api';
 
 import * as CartActions from '../../store/modules/cart/actions';
 import * as FavoriteActions from '../../store/modules/favorite/actions';
+import * as FilterActions from '../../store/modules/filter/actions';
 
 import ProductList from '../../components/ProductList';
 
-function Home({ amount, addToCartRequest, addToFavoriteRequest, addFilterCategory }) {
+function Home({
+  amount,
+  addToCartRequest,
+  addToFavoriteRequest,
+  addFilterCategoryRequest,
+  teste,
+}) {
   const [products, setProducts] = useState([]);
   const [category] = useState('MLB1051');
   const [offset, setOffset] = useState(1);
@@ -24,7 +31,7 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest, addFilterCategor
     });
   }
 
-  function setListCategories(data){
+  function setListCategories(data) {
     const arrayNew = [];
 
     data.map(item => {
@@ -62,6 +69,8 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest, addFilterCategor
   }
 
   useEffect(() => {
+    console.log('aqui');
+    console.log('teste', teste);
     loadItens();
   }, []);
 
@@ -72,8 +81,8 @@ function Home({ amount, addToCartRequest, addToFavoriteRequest, addFilterCategor
   }
 
   function onChangeCheckBox(categoria) {
-    console.log("filtrar por: ", categoria);
-    addFilterCategory(categoria);
+    console.log('filtrar por: ', categoria);
+    addFilterCategoryRequest(categoria, products);
   }
 
   function handleAddProduct(product) {
@@ -139,11 +148,13 @@ const mapStateToProps = state => ({
     amount[product.id] = product.amount;
     return amount;
   }, {}),
+  teste: state.filter,
 });
 
 const mapDispatchToProps = {
   ...CartActions,
   ...FavoriteActions,
+  ...FilterActions,
 };
 
 export default connect(

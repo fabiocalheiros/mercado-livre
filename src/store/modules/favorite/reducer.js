@@ -9,7 +9,6 @@ export default function favorite(state = [], action) {
       });
 
     case '@favorite/REMOVE':
-      console.log("remove item favoritos");
       return produce(state, draft => {
         const productIndex = draft.findIndex(p => p.id === action.id);
         if (productIndex >= 0) {
