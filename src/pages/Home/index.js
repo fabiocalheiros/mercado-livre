@@ -19,18 +19,17 @@ function Home({
   addToCartRequest,
   addToFavoriteRequest,
   addFilterCategoryRequest,
-  teste,
-  getProducts,
-  filterProducts
+  getProductsRequest,
+  filterProducts,
 }) {
-  const [products, setProducts] = useState([]);
   const productsFromState = useSelector(state => state.products);
+  const [products, setProducts] = useState(productsFromState);
   const [category] = useState('MLB1051');
   const [offset, setOffset] = useState(1);
   const [listCategories, setlistCategories] = useState([]);
 
   console.log('productsFromState', productsFromState);
-  console.log('products new', products);
+  // console.log('products new', products);
 
   function uniq(a) {
     return a.sort().filter(function(item, pos, ary) {
@@ -59,38 +58,27 @@ function Home({
     setlistCategories(uniqueNames);
   }
 
-  //REFACTOR: ISSO AQUI VC TEM QUE FAZER NA SAGA
   async function loadItens() {
-    const response = await api.get(`/sites/MLB/search?category=${category}`, {
-      params: {
-        offset: offset * 50,
-      },
-    });
+    console.log('iniciou a aplicação');
+    getProductsRequest();
 
-    const oldInfo = JSON.parse(localStorage.getItem('favorites'));
-    const exists = oldInfo || [];
-
-    // dispatch({ type: ProductsActions.getProducts(response.data.results) });
-    getProducts(response.data.results);
-
-    const data = response.data.results.map(product => ({
-      ...product,
-      priceFormatted: formatPrice(product.price),
-      favorite: !!exists.find(k => k.id === product.id),
-    }));
-
-    setProducts(data);
-    setListCategories(data);
+    fetch(URL)
+      .then(response => response.json())
+      .then(json => {
+        console.log('products', products);
+        console.log('productsFromState', productsFromState);
+        console.log('productsFromStateData', productsFromState.data);
+        console.log('json', json);
+      });
   }
 
   useEffect(() => {
-    console.log('quanto atualiza o checkbox caio aki sempre')
     loadItens();
   }, []);
 
   function handlePage(current, pageSize) {
     setOffset(current);
-    loadItens();
+    getProductsRequest();
     window.scrollTo(0, 0);
   }
 
@@ -133,7 +121,7 @@ function Home({
   return (
     <>
       <div className="out-site">
-        <div className="sidebar">
+        {/* <div className="sidebar">
           <h2>Propriedades</h2>
           <ul>
             {listCategories.map(item => (
@@ -144,15 +132,15 @@ function Home({
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
         <div className="out-view">
-          <ProductList
+          {/* <ProductList
             products={productsFromState.products}
             handlePage={handlePage}
             handleAddProduct={handleAddProduct}
             handleAddFavorite={handleAddFavorite}
             amount={amount}
-          />
+          /> */}
         </div>
       </div>
     </>
@@ -164,7 +152,6 @@ const mapStateToProps = state => ({
     amount[product.id] = product.amount;
     return amount;
   }, {}),
-  teste: state.filter,
 });
 
 const mapDispatchToProps = {

@@ -1,34 +1,39 @@
 import { select, put, call, all, takeLatest } from 'redux-saga/effects';
 
-import { getProducts, filterProducts } from './actions';
+import api from '../../../services/api';
+import { getProductsSuccess, filterProducts } from './actions';
 
-function* loadProducts() {
+import { formatPrice } from '../../../Util/format';
 
-  // products.map(item => {
-  //   item.attributes.map(attr => {
-  //     if (attr.id === 'BRAND' && attr.value_name === 'Apple') {
-  //       return item;
-  //     }
-  //   });
-  // });
+function* getProductsRequest() {
+  console.log('caiu no saga pra carregar os produtos');
+  async function loadItens() {
+    const offset = 1;
+    const response = await api.get(`/sites/MLB/search?category=MLB1051`, {
+      params: {
+        offset: offset * 50,
+      },
+    });
 
-  // ******* unica coisa que funciona *********
-  // products.splice(0, 47);
+    // const oldInfo = JSON.parse(localStorage.getItem('favorites'));
+    // const exists = oldInfo || [];
+    // const data = response.data.results.map(product => ({
+    //   ...product,
+    //   priceFormatted: formatPrice(product.price),
+    //   favorite: !!exists.find(k => k.id === product.id),
+    // }));
+    return response;
+  }
 
-  // products.find(p =>
-  //   p.attributes.find(i => i.id === 'BRAND' && i.value_name === 'Apple')
-  // );
+  const dataRequest = loadItens();
 
-  // console.log('filtro realizado', arrayNew);
-
-  yield getProducts();
+  // console.log('dataRequest', dataRequest);
+  yield put(getProductsSuccess(dataRequest));
 }
 
 function* loadFilteredProducts(products, category) {
-
-
-  console.log('products in saga', products)
-  console.log('category in saga', category)
+  console.log('products in saga', products);
+  console.log('category in saga', category);
 
   // products.map(item => {
   //   item.attributes.map(attr => {
@@ -51,6 +56,6 @@ function* loadFilteredProducts(products, category) {
 }
 
 export default all([
-  takeLatest('@products/GET_PRODUCTS', loadProducts),
+  takeLatest('@products/GET_PRODUCTS_REQUEST', getProductsRequest),
   takeLatest('@products/FILTER_PRODUCTS', loadFilteredProducts),
 ]);
