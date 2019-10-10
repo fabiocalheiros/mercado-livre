@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  setEffectLogs,
+} from 'react';
 import { toast } from 'react-toastify';
 import { connect, useSelector, useDispatch } from 'react-redux';
 
@@ -9,27 +14,23 @@ import api from '../../services/api';
 
 import * as CartActions from '../../store/modules/cart/actions';
 import * as FavoriteActions from '../../store/modules/favorite/actions';
-import * as FilterActions from '../../store/modules/filter/actions';
 import * as ProductsActions from '../../store/modules/products/actions';
 
 import ProductList from '../../components/ProductList';
 
 function Home({
-  amount,
+  products,
   addToCartRequest,
   addToFavoriteRequest,
   addFilterCategoryRequest,
   getProductsRequest,
   filterProducts,
 }) {
-  const productsFromState = useSelector(state => state.products);
-  const [products, setProducts] = useState(productsFromState);
-  const [category] = useState('MLB1051');
-  const [offset, setOffset] = useState(1);
+  // const productsFromState = useSelector(state => state.products);
+  // const [StateProducts, setStateProducts] = useState(products);
+  // const [category] = useState('MLB1051');
+  // const [offset, setOffset] = useState(1);
   const [listCategories, setlistCategories] = useState([]);
-
-  console.log('productsFromState', productsFromState);
-  // console.log('products new', products);
 
   function uniq(a) {
     return a.sort().filter(function(item, pos, ary) {
@@ -37,13 +38,7 @@ function Home({
     });
   }
 
-  // REFACTOR: ISSO AQUI TEM QUE SER NO SAGA
-  /* COM O REDUX + REDUX SAGA OS SEUS STATEFUL COMPONENTS
-     IRÃO APENAS TER FUNCÕES QUE DISPARAM AS ACTIONS PRA VC TRATAR
-     AS PARADAS NO SAGA. VOCÊ PODE USAR HOOKS AQUI SIM MAS VC VAI USAR MAIS
-     O useSelector para selecionar os estados que vem do REDUX
-  */
-  function setListCategories(data) {
+  function filterCategories(data) {
     const arrayNew = [];
 
     data.map(item => {
@@ -59,33 +54,26 @@ function Home({
   }
 
   async function loadItens() {
-    console.log('iniciou a aplicação');
     getProductsRequest();
-
-    fetch(URL)
-      .then(response => response.json())
-      .then(json => {
-        console.log('products', products);
-        console.log('productsFromState', productsFromState);
-        console.log('productsFromStateData', productsFromState.data);
-        console.log('json', json);
-      });
   }
 
   useEffect(() => {
     loadItens();
   }, []);
 
+  useEffect(() => {
+    filterCategories(products);
+  }, [products]);
+
   function handlePage(current, pageSize) {
-    setOffset(current);
-    getProductsRequest();
+    // setOffset(current);
+    // getProductsRequest();
     window.scrollTo(0, 0);
   }
 
-  // FAZER ESSA FUNÇÃO DISPARAR UMA AÇÃO E FILTRAR NO SAGA PELO CATEGORY_ID
-  function onChangeCheckBox(product) {
-    console.log('product', product);
-    filterProducts(productsFromState.products, product.category_id);
+  function onChangeCheckBox(brand) {
+    console.log('brand', brand);
+    filterProducts(brand);
     // addFilterCategoryRequest(categoria, products);
   }
 
@@ -113,7 +101,7 @@ function Home({
           item.favorite = !item.favorite;
         }
       });
-      setProducts(listProducts);
+      // setStateProducts(listProducts);
     }
     addToFavoriteRequest(product);
   }
@@ -121,7 +109,7 @@ function Home({
   return (
     <>
       <div className="out-site">
-        {/* <div className="sidebar">
+        <div className="sidebar">
           <h2>Propriedades</h2>
           <ul>
             {listCategories.map(item => (
@@ -132,15 +120,15 @@ function Home({
               </li>
             ))}
           </ul>
-        </div> */}
+        </div>
         <div className="out-view">
-          {/* <ProductList
-            products={productsFromState.products}
+          <ProductList
+            products={products}
             handlePage={handlePage}
             handleAddProduct={handleAddProduct}
             handleAddFavorite={handleAddFavorite}
-            amount={amount}
-          /> */}
+            amount={1}
+          />
         </div>
       </div>
     </>
@@ -148,16 +136,12 @@ function Home({
 }
 
 const mapStateToProps = state => ({
-  amount: state.cart.reduce((amount, product) => {
-    amount[product.id] = product.amount;
-    return amount;
-  }, {}),
+  products: state.products,
 });
 
 const mapDispatchToProps = {
   ...CartActions,
   ...FavoriteActions,
-  ...FilterActions,
   ...ProductsActions,
 };
 

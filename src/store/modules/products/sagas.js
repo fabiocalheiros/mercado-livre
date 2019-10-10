@@ -1,61 +1,54 @@
 import { select, put, call, all, takeLatest } from 'redux-saga/effects';
 
 import api from '../../../services/api';
-import { getProductsSuccess, filterProducts } from './actions';
+import { getProductsSuccess, filterProductsSuccess } from './actions';
 
-import { formatPrice } from '../../../Util/format';
+// import { formatPrice } from '../../../Util/format';
 
-function* getProductsRequest() {
-  console.log('caiu no saga pra carregar os produtos');
-  async function loadItens() {
-    const offset = 1;
-    const response = await api.get(`/sites/MLB/search?category=MLB1051`, {
-      params: {
-        offset: offset * 50,
-      },
+function apiGet() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const offset = 1;
+      const response = api.get(`/sites/MLB/search?category=MLB1051`, {
+        params: {
+          offset: offset * 50,
+        },
+      });
+      resolve(response);
     });
-
-    // const oldInfo = JSON.parse(localStorage.getItem('favorites'));
-    // const exists = oldInfo || [];
-    // const data = response.data.results.map(product => ({
-    //   ...product,
-    //   priceFormatted: formatPrice(product.price),
-    //   favorite: !!exists.find(k => k.id === product.id),
-    // }));
-    return response;
-  }
-
-  const dataRequest = loadItens();
-
-  // console.log('dataRequest', dataRequest);
-  yield put(getProductsSuccess(dataRequest));
+  });
 }
 
-function* loadFilteredProducts(products, category) {
-  console.log('products in saga', products);
-  console.log('category in saga', category);
+function* getProductsRequest() {
+  try {
+    const response = yield call(apiGet);
+    yield put(getProductsSuccess(response));
+  } catch (err) {
+    console.log(err);
+  }
+}
 
-  // products.map(item => {
-  //   item.attributes.map(attr => {
-  //     if (attr.id === 'BRAND' && attr.value_name === 'Apple') {
-  //       return item;
-  //     }
-  //   });
-  // });
+function* filterProducts(action) {
+  console.log('category in saga', action.category);
 
-  // ******* unica coisa que funciona *********
-  // products.splice(0, 47);
+  const stateProducts = yield select(state => state.products);
 
-  // products.find(p =>
-  //   p.attributes.find(i => i.id === 'BRAND' && i.value_name === 'Apple')
-  // );
+  const arrayNew = [];
 
-  // console.log('filtro realizado', arrayNew);
+  stateProducts.map(item => {
+    item.attributes.map(attr => {
+      if (attr.id === 'BRAND' && attr.value_name === action.category) {
+        arrayNew.push(item);
+      }
+    });
+  });
 
-  yield filterProducts(products, category);
+  console.log(arrayNew);
+
+  yield put(filterProductsSuccess(arrayNew));
 }
 
 export default all([
   takeLatest('@products/GET_PRODUCTS_REQUEST', getProductsRequest),
-  takeLatest('@products/FILTER_PRODUCTS', loadFilteredProducts),
+  takeLatest('@products/FILTER_PRODUCTS', filterProducts),
 ]);

@@ -1,8 +1,7 @@
 // dispatch saga
-export function getProductsRequest(products) {
+export function getProductsRequest() {
   return {
     type: '@products/GET_PRODUCTS_REQUEST',
-    products,
   };
 }
 
@@ -13,11 +12,17 @@ export function getProductsSuccess(products) {
     products,
   };
 }
-
-export function filterProducts(products, category) {
+// dispatch saga
+export function filterProducts(category) {
   return {
     type: '@products/FILTER_PRODUCTS',
-    products,
     category,
+  };
+}
+
+export function filterProductsSuccess(products) {
+  return {
+    type: '@products/FILTER_PRODUCTS_SUCCESS',
+    products,
   };
 }
